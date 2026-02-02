@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  obsidian-mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: obsidian-mcp-server:latest
+    container_name: obsidian-mcp-server
+    environment:
+      # Path inside container where vault is mounted
+      - VAULT_PATH=/vault
+      # Transport mode: "stdio" for Claude Desktop, "sse" for remote
+      - TRANSPORT=stdio
+      # Logging level: DEBUG, INFO, WARNING, ERROR
+      - LOG_LEVEL=INFO
+      # SSE mode settings (only used when TRANSPORT=sse)
+      # - HOST=0.0.0.0
+      # - PORT=3000
+    volumes:
+      # Mount your Obsidian vault directory
+      - ${VAULT_PATH:-./example-vault}:/vault:ro
+    # For SSE mode, expose the port
+    # ports:
+    #   - "3000:3000"
+    # For stdio mode with Claude Desktop, use stdin_open and tty
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+
+  # Alternative service configuration for SSE mode
+  obsidian-mcp-sse:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: obsidian-mcp-server:latest
+    container_name: obsidian-mcp-server-sse
+    profiles:
+      - sse
+    environment:
+      - VAULT_PATH=/vault
+      - TRANSPORT=sse
+      - LOG_LEVEL=INFO
+      - HOST=0.0.0.0
+      - PORT=3000
+    volumes:
+      - ${VAULT_PATH:-./example-vault}:/vault:ro
+    ports:
+      - "3000:3000"
+    restart: unless-stopped

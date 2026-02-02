@@ -1,0 +1,17 @@
+{
+  "mcpServers": {
+    "obsidian": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e", "VAULT_PATH=/vault",
+        "-e", "TRANSPORT=stdio",
+        "-e", "LOG_LEVEL=INFO",
+        "-v", "C:\\Users\\arcma\\OneDrive\\Documents\\Obsidian Vault:/vault:ro",
+        "mahir009/obsidian-mcp-server:latest"
+      ]
+    }
+  }
+}
